@@ -1,8 +1,8 @@
 # Benchmark of Joachim Breitner's Haskell Love Talk
 
-Here is the link to the talk:
+I watched Joachim Breitner's Haskell Love talk today. He starts with a high level specification of a program that checks if a binary tree is ordered. During the talk he develops many different implementations. I thought that it would be interesting to see how fast all the different implementations really are. It was surprising for me that the slowest implementation was only about 14 times slower than the fastest implementation.
 
-https://vimeo.com/442720683#t=7067s
+Here is the link to the talk: https://vimeo.com/442720683#t=7067s
 
 Breitner's talk starts around 1:57:47.
 
@@ -28,7 +28,7 @@ The fastest is isOrdered5 with a close runner up being isOrdered12.
 The slowest are isOrdered1 and isOrdered2, which seem to be compiled to the
 same optimized binary code.
 
-Here are all the results:
+Here are all the results with GHC 8.10.1 and `-O2`:
 
 ```
 benchmarked isOrdered1/100
