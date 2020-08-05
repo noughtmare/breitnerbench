@@ -1,19 +1,31 @@
 {-# LANGUAGE DeriveFoldable #-}
 
+-- We export all the implementations to prevent some optimizations that happen
+-- to non-exported functions.
+module Main
+  ( main
+  , isOrdered1
+  , isOrdered2
+  , isOrdered3
+  , isOrdered4
+  , isOrdered5
+  , isOrdered5'
+  , isOrdered6
+  , isOrdered7
+  , isOrdered8
+  , isOrdered9
+  , isOrdered10
+  , isOrdered11
+  , isOrdered12
+  , isOrdered13
+  ) where
+
 import Data.Foldable
 import Data.Maybe
 import Control.Monad
 import Gauge
 
 data Tree a = Leaf | Node (Tree a) a (Tree a) deriving (Show, Foldable)
-
-mkBalancedOrderedTree :: Int -> Tree Int
-mkBalancedOrderedTree n = go (0, n) where
-  go (l, u)
-    | l == u = Leaf
-    | otherwise = Node (go (l, m)) m (go (m + 1, u))
-    where
-      m = (l + u) `quot` 2
 
 isOrdered1 :: Ord a => Tree a -> Bool
 isOrdered1 = everynode (\l x r -> all (<= x) (elems l) && all (>= x) (elems r))
@@ -63,6 +75,17 @@ isOrdered5 :: Ord a => Tree a -> Bool
 isOrdered5 = go' (Nothing, Nothing)
   where
     go' :: Ord a => (Maybe a, Maybe a) -> Tree a -> Bool
+    go' p Leaf = True
+    go' (lb, ub) (Node l x r) =
+        maybe True (<= x) lb &&
+        maybe True (>= x) ub &&
+        go' (lb, Just x) l &&
+        go' (Just x, ub) r
+
+isOrdered5' :: Tree Int -> Bool
+isOrdered5' = go' (Nothing, Nothing)
+  where
+    go' :: (Maybe Int, Maybe Int) -> Tree Int -> Bool
     go' p Leaf = True
     go' (lb, ub) (Node l x r) =
         maybe True (<= x) lb &&
@@ -160,44 +183,55 @@ isOrdered13 t = sortedList (toList t)
 main :: IO ()
 main = defaultMain
   [ bgroup "isOrdered1"
-    [ bench "100" $ whnf isOrdered1 t
+    [ bench "10000" $ whnf isOrdered1 t4
     ]
   , bgroup "isOrdered2"
-    [ bench "100" $ whnf isOrdered2 t
+    [ bench "10000" $ whnf isOrdered2 t4
     ]
   , bgroup "isOrdered3"
-    [ bench "100" $ whnf isOrdered3 t
+    [ bench "10000" $ whnf isOrdered3 t4
     ]
   , bgroup "isOrdered4"
-    [ bench "100" $ whnf isOrdered4 t
+    [ bench "10000" $ whnf isOrdered4 t4
     ]
   , bgroup "isOrdered5"
-    [ bench "100" $ whnf isOrdered5 t
+    [ bench "10000" $ whnf isOrdered5 t4
+    ]
+  , bgroup "isOrdered5 (specialized)"
+    [ bench "10000" $ whnf isOrdered5' t4
     ]
   , bgroup "isOrdered6"
-    [ bench "100" $ whnf isOrdered6 t
+    [ bench "10000" $ whnf isOrdered6 t4
     ]
   , bgroup "isOrdered7"
-    [ bench "100" $ whnf isOrdered7 t
+    [ bench "10000" $ whnf isOrdered7 t4
     ]
   , bgroup "isOrdered8"
-    [ bench "100" $ whnf isOrdered8 t
+    [ bench "10000" $ whnf isOrdered8 t4
     ]
   , bgroup "isOrdered9"
-    [ bench "100" $ whnf isOrdered9 t
+    [ bench "10000" $ whnf isOrdered9 t4
     ]
   , bgroup "isOrdered10"
-    [ bench "100" $ whnf isOrdered10 t
+    [ bench "10000" $ whnf isOrdered10 t4
     ]
   , bgroup "isOrdered11"
-    [ bench "100" $ whnf isOrdered11 t
+    [ bench "10000" $ whnf isOrdered11 t4
     ]
   , bgroup "isOrdered12"
-    [ bench "100" $ whnf isOrdered12 t
+    [ bench "10000" $ whnf isOrdered12 t4
     ]
   , bgroup "isOrdered13"
-    [ bench "100" $ whnf isOrdered13 t
+    [ bench "10000" $ whnf isOrdered13 t4
     ]
   ]
   where
-    t = mkBalancedOrderedTree 100
+    t4 = mkBalancedOrderedTree 10000
+
+    mkBalancedOrderedTree :: Int -> Tree Int
+    mkBalancedOrderedTree n = go (0, n) where
+      go (l, u)
+        | l == u = Leaf
+        | otherwise = Node (go (l, m)) m (go (m + 1, u))
+        where
+          m = (l + u) `quot` 2
