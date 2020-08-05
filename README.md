@@ -6,6 +6,9 @@ https://vimeo.com/442720683#t=7067s
 
 Breitner's talk starts around 1:57:47.
 
+Currently, I only test the functions on balanced ordered trees with 100
+elements from 0 to 100.
+
 ## Run these yourself
 
 My machine may produce different results than yours.
@@ -22,7 +25,8 @@ cabal run
 
 The fastest is isOrdered5 with a close runner up being isOrdered12.
 
-The slowest are isOrdered1 and isOrdered2, which seem to be compiled to the same optimized binary code.
+The slowest are isOrdered1 and isOrdered2, which seem to be compiled to the
+same optimized binary code.
 
 Here are all the results:
 
