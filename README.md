@@ -23,106 +23,108 @@ cabal run -O2
 
 ## On my machine
 
-The fastest is the specialized version of `isOrdered5`, otherwise the fastest is `isOrdered12`. Specialization of `isOrdered12` does not decrease the running time significantly.
+The fastest is `isOrdered12`, but `isOrdered5` can be specialized to `Int`, the tuple can be changed to two arguments and the max and min bounds can be used instead of using a maybe type.
 
-The slowest are `isOrdered1` and `isOrdered2`, which seem to be compiled to the same optimized binary code.
+The slowest is `isOrdered6`.
 
 Here are all the results with GHC 8.10.1 and `-O2`:
 
 ```
 benchmarked isOrdered1/10000
-time                 3.555 ms   (3.536 ms .. 3.572 ms)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 3.557 ms   (3.550 ms .. 3.568 ms)
-std dev              26.91 μs   (20.89 μs .. 36.60 μs)
+time                 3.445 ms   (3.380 ms .. 3.491 ms)
+                     0.994 R²   (0.986 R² .. 0.998 R²)
+mean                 3.578 ms   (3.532 ms .. 3.657 ms)
+std dev              198.4 μs   (129.8 μs .. 304.4 μs)
+variance introduced by outliers: 31% (moderately inflated)
 
 benchmarked isOrdered2/10000
-time                 3.777 ms   (3.588 ms .. 3.981 ms)
-                     0.989 R²   (0.982 R² .. 0.999 R²)
-mean                 3.590 ms   (3.556 ms .. 3.661 ms)
-std dev              148.1 μs   (62.03 μs .. 239.2 μs)
-variance introduced by outliers: 20% (moderately inflated)
+time                 3.723 ms   (3.600 ms .. 3.897 ms)
+                     0.990 R²   (0.977 R² .. 0.999 R²)
+mean                 3.569 ms   (3.537 ms .. 3.649 ms)
+std dev              159.3 μs   (88.03 μs .. 272.5 μs)
+variance introduced by outliers: 24% (moderately inflated)
 
 benchmarked isOrdered3/10000
-time                 1.106 ms   (1.097 ms .. 1.119 ms)
-                     0.997 R²   (0.995 R² .. 0.999 R²)
-mean                 1.179 ms   (1.163 ms .. 1.198 ms)
-std dev              62.15 μs   (53.37 μs .. 71.91 μs)
-variance introduced by outliers: 33% (moderately inflated)
+time                 1.120 ms   (1.116 ms .. 1.124 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.122 ms   (1.120 ms .. 1.126 ms)
+std dev              10.33 μs   (6.950 μs .. 16.89 μs)
 
 benchmarked isOrdered4/10000
-time                 1.660 ms   (1.607 ms .. 1.726 ms)
-                     0.993 R²   (0.989 R² .. 0.998 R²)
-mean                 1.593 ms   (1.581 ms .. 1.616 ms)
-std dev              57.92 μs   (40.94 μs .. 84.45 μs)
-variance introduced by outliers: 17% (moderately inflated)
+time                 1.592 ms   (1.589 ms .. 1.597 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.597 ms   (1.594 ms .. 1.601 ms)
+std dev              10.84 μs   (7.971 μs .. 15.27 μs)
 
 benchmarked isOrdered5/10000
-time                 191.2 μs   (187.8 μs .. 195.0 μs)
-                     0.997 R²   (0.995 R² .. 0.999 R²)
-mean                 196.6 μs   (194.6 μs .. 200.6 μs)
-std dev              9.247 μs   (6.358 μs .. 14.37 μs)
-variance introduced by outliers: 27% (moderately inflated)
+time                 198.1 μs   (197.6 μs .. 198.5 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 198.8 μs   (198.6 μs .. 199.1 μs)
+std dev              1.004 μs   (840.1 ns .. 1.228 μs)
 
 benchmarked isOrdered5 (specialized)/10000
-time                 95.24 μs   (93.55 μs .. 97.27 μs)
-                     0.994 R²   (0.990 R² .. 0.997 R²)
-mean                 101.0 μs   (99.27 μs .. 103.2 μs)
-std dev              7.008 μs   (5.783 μs .. 8.958 μs)
-variance introduced by outliers: 46% (moderately inflated)
+time                 97.43 μs   (97.17 μs .. 97.69 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 97.49 μs   (97.34 μs .. 97.66 μs)
+std dev              525.1 ns   (439.6 ns .. 665.8 ns)
+
+benchmarked isOrdered5 (specialized & curried)/10000
+time                 73.18 μs   (73.00 μs .. 73.40 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 73.35 μs   (73.24 μs .. 73.48 μs)
+std dev              424.3 ns   (342.0 ns .. 562.4 ns)
+
+benchmarked isOrdered5 (specialized & curried & bounded)/10000
+time                 62.57 μs   (61.99 μs .. 63.09 μs)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 62.85 μs   (62.62 μs .. 63.06 μs)
+std dev              757.5 ns   (592.2 ns .. 911.6 ns)
 
 benchmarked isOrdered6/10000
-time                 4.353 ms   (4.283 ms .. 4.438 ms)
-                     0.996 R²   (0.990 R² .. 0.999 R²)
-mean                 4.725 ms   (4.631 ms .. 4.877 ms)
-std dev              366.5 μs   (235.2 μs .. 548.2 μs)
-variance introduced by outliers: 47% (moderately inflated)
+time                 4.464 ms   (4.433 ms .. 4.499 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 4.486 ms   (4.474 ms .. 4.500 ms)
+std dev              41.40 μs   (33.11 μs .. 51.08 μs)
 
 benchmarked isOrdered7/10000
-time                 1.754 ms   (1.723 ms .. 1.812 ms)
-                     0.995 R²   (0.991 R² .. 0.998 R²)
-mean                 1.750 ms   (1.732 ms .. 1.776 ms)
-std dev              67.56 μs   (49.90 μs .. 86.69 μs)
-variance introduced by outliers: 19% (moderately inflated)
+time                 1.790 ms   (1.783 ms .. 1.795 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.777 ms   (1.772 ms .. 1.782 ms)
+std dev              16.42 μs   (12.42 μs .. 22.69 μs)
 
 benchmarked isOrdered8/10000
-time                 2.778 ms   (2.705 ms .. 2.828 ms)
-                     0.996 R²   (0.994 R² .. 0.998 R²)
-mean                 2.790 ms   (2.762 ms .. 2.833 ms)
-std dev              117.4 μs   (90.78 μs .. 163.3 μs)
-variance introduced by outliers: 23% (moderately inflated)
+time                 2.770 ms   (2.758 ms .. 2.786 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 2.765 ms   (2.759 ms .. 2.773 ms)
+std dev              23.42 μs   (17.08 μs .. 31.73 μs)
 
 benchmarked isOrdered9/10000
-time                 1.134 ms   (1.065 ms .. 1.204 ms)
-                     0.986 R²   (0.979 R² .. 0.996 R²)
-mean                 1.075 ms   (1.064 ms .. 1.096 ms)
-std dev              51.60 μs   (37.62 μs .. 76.10 μs)
-variance introduced by outliers: 27% (moderately inflated)
+time                 1.013 ms   (1.009 ms .. 1.016 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.012 ms   (1.010 ms .. 1.015 ms)
+std dev              8.793 μs   (7.130 μs .. 10.91 μs)
 
 benchmarked isOrdered10/10000
-time                 309.8 μs   (292.4 μs .. 324.2 μs)
-                     0.986 R²   (0.979 R² .. 0.992 R²)
-mean                 303.0 μs   (296.5 μs .. 321.4 μs)
-std dev              32.82 μs   (16.88 μs .. 64.25 μs)
-variance introduced by outliers: 67% (severely inflated)
+time                 270.2 μs   (268.6 μs .. 271.8 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 269.5 μs   (268.8 μs .. 270.4 μs)
+std dev              2.587 μs   (2.123 μs .. 3.173 μs)
 
 benchmarked isOrdered11/10000
-time                 709.3 μs   (666.2 μs .. 753.0 μs)
-                     0.964 R²   (0.938 R² .. 0.984 R²)
-mean                 761.4 μs   (739.2 μs .. 783.3 μs)
-std dev              72.69 μs   (64.73 μs .. 83.83 μs)
-variance introduced by outliers: 59% (severely inflated)
+time                 660.9 μs   (657.8 μs .. 664.3 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 661.7 μs   (660.2 μs .. 663.6 μs)
+std dev              5.611 μs   (4.348 μs .. 8.156 μs)
 
 benchmarked isOrdered12/10000
-time                 98.31 μs   (96.50 μs .. 100.2 μs)
-                     0.994 R²   (0.989 R² .. 0.998 R²)
-mean                 108.8 μs   (106.3 μs .. 111.6 μs)
-std dev              8.823 μs   (7.718 μs .. 10.03 μs)
-variance introduced by outliers: 54% (severely inflated)
+time                 96.61 μs   (96.20 μs .. 97.10 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 96.97 μs   (96.70 μs .. 97.41 μs)
+std dev              1.130 μs   (779.0 ns .. 1.901 μs)
 
 benchmarked isOrdered13/10000
-time                 138.7 μs   (137.8 μs .. 140.2 μs)
-                     0.998 R²   (0.996 R² .. 1.000 R²)
-mean                 138.4 μs   (137.8 μs .. 139.7 μs)
-std dev              2.817 μs   (1.225 μs .. 4.685 μs)
+time                 141.7 μs   (141.2 μs .. 142.1 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 142.0 μs   (141.7 μs .. 142.4 μs)
+std dev              1.298 μs   (1.033 μs .. 1.740 μs)
 ```

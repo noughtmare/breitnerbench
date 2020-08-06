@@ -10,6 +10,8 @@ module Main
   , isOrdered4
   , isOrdered5
   , isOrdered5'
+  , isOrdered5''
+  , isOrdered5'''
   , isOrdered6
   , isOrdered7
   , isOrdered8
@@ -93,6 +95,24 @@ isOrdered5' = go' (Nothing, Nothing)
         go' (lb, Just x) l &&
         go' (Just x, ub) r
 
+isOrdered5'' :: Tree Int -> Bool
+isOrdered5'' = go' Nothing Nothing
+  where
+    go' :: Maybe Int -> Maybe Int -> Tree Int -> Bool
+    go' _ _ Leaf = True
+    go' lb ub (Node l x r) =
+        maybe True (<= x) lb &&
+        maybe True (>= x) ub &&
+        go' lb (Just x) l &&
+        go' (Just x) ub r
+
+isOrdered5''' :: Tree Int -> Bool
+isOrdered5''' = go' minBound maxBound
+  where
+    go' :: Int -> Int -> Tree Int -> Bool
+    go' _ _ Leaf = True
+    go' lb ub (Node l x r) = lb <= x && ub >= x && go' lb x l && go' x ub r
+
 isOrdered6 :: Ord a => Tree a -> Bool
 isOrdered6 t = fst (go' t)
   where
@@ -166,6 +186,7 @@ isOrdered11 t = sortedList (go' t)
     go' Leaf = []
     go' (Node l x r) = go' l ++ [x] ++ go' r
 
+sortedList :: Ord a => [a] -> Bool
 sortedList [] = True
 sortedList [x] = True
 sortedList (x:y:zs) = x <= y && sortedList (y:zs)
@@ -199,6 +220,12 @@ main = defaultMain
     ]
   , bgroup "isOrdered5 (specialized)"
     [ bench "10000" $ whnf isOrdered5' t4
+    ]
+  , bgroup "isOrdered5 (specialized & curried)"
+    [ bench "10000" $ whnf isOrdered5'' t4
+    ]
+  , bgroup "isOrdered5 (specialized & curried & bounded)"
+    [ bench "10000" $ whnf isOrdered5''' t4
     ]
   , bgroup "isOrdered6"
     [ bench "10000" $ whnf isOrdered6 t4
