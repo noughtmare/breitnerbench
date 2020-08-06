@@ -29,4 +29,4 @@ The slowest is `isOrdered6`.
 
 Here are all the results with GHC 8.10.1 and `-O2`:
 
-![chart](report/chart.png)
+![report](report/report.png)
