@@ -18,7 +18,8 @@ Find out by cloning this repo and running it with cabal:
 ```
 git clone https://github.com/noughtmare/breitnerbench.git
 cd breitnerbench
-cabal run -O2
+cabal run -O2 breitnerbench -- -o report.html
+xdg-open report.html
 ```
 
 ## On my machine
