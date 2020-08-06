@@ -25,7 +25,7 @@ module Main
 import Data.Foldable
 import Data.Maybe
 import Control.Monad
-import Gauge
+import Criterion.Main
 
 data Tree a = Leaf | Node (Tree a) a (Tree a) deriving (Show, Foldable)
 
@@ -221,10 +221,10 @@ main = defaultMain
   , bgroup "isOrdered5 (specialized)"
     [ bench "10000" $ whnf isOrdered5' t4
     ]
-  , bgroup "isOrdered5 (specialized & curried)"
+  , bgroup "isOrdered5 (curried)"
     [ bench "10000" $ whnf isOrdered5'' t4
     ]
-  , bgroup "isOrdered5 (specialized & curried & bounded)"
+  , bgroup "isOrdered5 (bounded)"
     [ bench "10000" $ whnf isOrdered5''' t4
     ]
   , bgroup "isOrdered6"
